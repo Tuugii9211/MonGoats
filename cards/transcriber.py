@@ -13,6 +13,18 @@ from abc import ABC, abstractmethod
 import requests
 
 
+def _raise_with_detail(response, provider: str) -> None:
+    """Like raise_for_status(), but keeps the provider's error text, which
+    usually says why (invalid key, no credits, bad audio format...)."""
+    if response.ok:
+        return
+    detail = response.text.strip()[:500] or "(empty response body)"
+    raise requests.HTTPError(
+        f"{provider} returned {response.status_code} {response.reason}: {detail}",
+        response=response,
+    )
+
+
 class Transcriber(ABC):
     """Abstract base. Contract: audio path in, plain-text transcript out.
     No timestamps, no confidence scores, no speaker labels — this project
@@ -62,7 +74,7 @@ class ChimegeTranscriber(Transcriber):
                 },
                 data=f.read(),
             )
-        response.raise_for_status()
+        _raise_with_detail(response, "Chimege")
         return response.json()  # {"uuid": ..., "duration": ...}
 
     def _poll_transcript(self, uuid: str) -> str:
@@ -72,7 +84,7 @@ class ChimegeTranscriber(Transcriber):
                 self.POLL_URL,
                 headers={"Token": self.token, "UUID": uuid},
             )
-            response.raise_for_status()
+            _raise_with_detail(response, "Chimege")
             payload = response.json()
             if payload.get("done"):
                 return payload[self.TRANSCRIPT_FIELD]
@@ -108,7 +120,7 @@ class ElevenLabsTranscriber(Transcriber):
                 files={"file": f},
                 data={"model_id": self.MODEL_ID},
             )
-        response.raise_for_status()
+        _raise_with_detail(response, "ElevenLabs")
         return response.json()["text"]
 
 

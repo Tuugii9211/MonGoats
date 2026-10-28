@@ -1,10 +1,43 @@
-// MonGoats site scripts: notifications dropdown + story-feed swipe controls.
+// MonGoats site scripts: theme toggle, notifications dropdown + story-feed swipe controls.
 // Plain JS, no build step — this project has no bundler configured.
 
 document.addEventListener("DOMContentLoaded", function () {
+  initThemeToggle();
   initNotifications();
   initFeedControls();
 });
+
+function initThemeToggle() {
+  var btn = document.getElementById("theme-toggle");
+  var root = document.documentElement;
+  if (!btn) return;
+
+  function apply(theme, save) {
+    root.setAttribute("data-theme", theme);
+    btn.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+    if (save) {
+      try { localStorage.setItem("theme", theme); } catch (e) {}
+    }
+  }
+
+  apply(root.getAttribute("data-theme") === "light" ? "light" : "dark", false);
+
+  btn.addEventListener("click", function () {
+    apply(root.getAttribute("data-theme") === "dark" ? "light" : "dark", true);
+  });
+
+  // Follow the OS setting until the user picks a theme themselves.
+  if (window.matchMedia) {
+    var mq = window.matchMedia("(prefers-color-scheme: light)");
+    var onChange = function (e) {
+      var saved = null;
+      try { saved = localStorage.getItem("theme"); } catch (err) {}
+      if (!saved) apply(e.matches ? "light" : "dark", false);
+    };
+    if (mq.addEventListener) mq.addEventListener("change", onChange);
+    else if (mq.addListener) mq.addListener(onChange);
+  }
+}
 
 function initNotifications() {
   var toggle = document.getElementById("notif-toggle");

@@ -1,20 +1,68 @@
-/* MonGoats — dark brown/orange theme */
+/* MonGoats — dark (black + navy, white neon) / light (white + aqua neon) themes.
+   Dark is the default; [data-theme="light"] on <html> switches to light. */
 
 :root {
-  --bg-deep: #1c110a;
-  --bg-base: #2b1810;
-  --bg-panel: #3a2216;
-  --bg-panel-light: #472a1a;
-  --border-warm: #5a3a24;
-  --accent: #ff8c3a;
-  --accent-bright: #ffb35c;
-  --accent-glow: #ffcf8a;
-  --text-main: #f5e9dc;
-  --text-muted: #c9b39e;
+  color-scheme: dark;
+  --bg-deep: #000000;
+  --bg-base: #000000;
+  --bg-panel: #0a0e1a;
+  --bg-panel-light: #111830;
+  --border-warm: #1c2a55;
+  --accent: #3d6bff;
+  --accent-bright: #8fb0ff;
+  --accent-rgb: 61, 107, 255;
+  --on-accent: #ffffff;
+  --text-main: #f2f5ff;
+  --text-muted: #9aa6c4;
   --danger: #ff6b6b;
   --success: #7fd88a;
   --radius: 14px;
-  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.6);
+
+  --header-bg: rgba(0, 0, 0, 0.9);
+  --header-line: #1e3a9e;
+  --header-glow: 0 1px 0 rgba(61, 107, 255, 0.35), 0 8px 28px rgba(20, 45, 140, 0.45);
+  --hero-bg:
+    radial-gradient(ellipse 90% 55% at 50% 0%, rgba(22, 48, 150, 0.55), transparent 70%),
+    radial-gradient(ellipse at 80% 85%, rgba(40, 70, 200, 0.10), transparent 55%),
+    #000000;
+  --hello-color: #ffffff;
+  --hello-shadow:
+    0 0 4px #ffffff,
+    0 0 12px rgba(255, 255, 255, 0.85),
+    0 0 28px rgba(180, 200, 255, 0.55),
+    0 0 52px rgba(90, 130, 255, 0.35);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg-deep: #f2fbfd;
+  --bg-base: #ffffff;
+  --bg-panel: #ffffff;
+  --bg-panel-light: #eefafc;
+  --border-warm: #c4ecf2;
+  --accent: #00c2d8;
+  --accent-bright: #008fa6;
+  --accent-rgb: 0, 194, 216;
+  --on-accent: #00262e;
+  --text-main: #0b1f2a;
+  --text-muted: #4d6a77;
+  --danger: #d64545;
+  --success: #1f9d55;
+  --shadow-soft: 0 10px 30px rgba(0, 90, 110, 0.10);
+
+  --header-bg: rgba(255, 255, 255, 0.9);
+  --header-line: #a8e8f1;
+  --header-glow: 0 6px 24px rgba(0, 194, 216, 0.14);
+  --hero-bg:
+    radial-gradient(ellipse at 30% 20%, rgba(0, 210, 230, 0.14), transparent 55%),
+    radial-gradient(ellipse at 75% 75%, rgba(0, 210, 230, 0.10), transparent 50%),
+    linear-gradient(180deg, #ffffff, #f2fbfd);
+  --hello-color: #14d4e8;
+  --hello-shadow:
+    0 0 4px rgba(0, 225, 245, 0.9),
+    0 0 14px rgba(0, 215, 235, 0.65),
+    0 0 32px rgba(0, 200, 225, 0.4);
 }
 
 * { box-sizing: border-box; }
@@ -26,6 +74,7 @@ html, body {
   color: var(--text-main);
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
   scroll-behavior: smooth;
+  transition: background-color .3s ease, color .3s ease;
 }
 
 a { color: inherit; text-decoration: none; }
@@ -43,8 +92,9 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   gap: 24px;
   padding: 16px 32px;
-  background: linear-gradient(180deg, var(--bg-deep), rgba(28, 17, 10, 0.92));
-  border-bottom: 1px solid var(--border-warm);
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--header-line);
+  box-shadow: var(--header-glow);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -105,10 +155,10 @@ a { color: inherit; text-decoration: none; }
 
 .btn-primary {
   background: linear-gradient(135deg, var(--accent-bright), var(--accent));
-  color: #241205;
-  box-shadow: 0 4px 16px rgba(255, 140, 58, 0.35);
+  color: var(--on-accent);
+  box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.35);
 }
-.btn-primary:hover { box-shadow: 0 6px 20px rgba(255, 140, 58, 0.5); }
+.btn-primary:hover { box-shadow: 0 6px 20px rgba(var(--accent-rgb), 0.5); }
 
 .btn-ghost {
   background: transparent;
@@ -148,6 +198,13 @@ a { color: inherit; text-decoration: none; }
   font-weight: 800;
   color: var(--accent-bright);
 }
+
+/* ---------- Theme toggle ---------- */
+
+.theme-toggle .icon-sun { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.theme-toggle .icon-moon { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-sun { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-moon { display: block; }
 
 /* ---------- Notifications ---------- */
 
@@ -202,10 +259,7 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background:
-    radial-gradient(ellipse at 30% 20%, rgba(255, 140, 58, 0.18), transparent 55%),
-    radial-gradient(ellipse at 75% 75%, rgba(255, 140, 58, 0.12), transparent 50%),
-    linear-gradient(180deg, var(--bg-deep), var(--bg-base));
+  background: var(--hero-bg);
   padding: 40px 24px;
 }
 
@@ -218,8 +272,8 @@ a { color: inherit; text-decoration: none; }
 .hello {
   position: absolute;
   font-weight: 700;
-  color: var(--accent-glow);
-  text-shadow: 0 0 12px rgba(255, 179, 92, 0.85), 0 0 30px rgba(255, 140, 58, 0.5);
+  color: var(--hello-color);
+  text-shadow: var(--hello-shadow);
   opacity: 0;
   animation: float-glow 9s ease-in-out infinite;
   white-space: nowrap;
@@ -303,7 +357,7 @@ a { color: inherit; text-decoration: none; }
 
 .search-input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(255, 140, 58, 0.25);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.25);
 }
 
 .feed-heading h2 { margin: 0; font-size: 1.6rem; }
@@ -365,7 +419,7 @@ a { color: inherit; text-decoration: none; }
 .lang-badge {
   display: inline-block;
   background: var(--accent);
-  color: #241205;
+  color: var(--on-accent);
   font-weight: 800;
   font-size: 0.72rem;
   text-transform: uppercase;
@@ -439,7 +493,7 @@ a { color: inherit; text-decoration: none; }
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent-bright), var(--accent));
   display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 1.6rem; color: #241205;
+  font-weight: 800; font-size: 1.6rem; color: var(--on-accent);
   overflow: hidden;
 }
 .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
